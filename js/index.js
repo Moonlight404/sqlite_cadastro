@@ -19,6 +19,7 @@ const app = new Vue({
     methods: {
         cadastrar(){
             if(this.user.nome.length == 0 || this.user.email.length == 0 || this.user.login.length == 0 || this.user.senha.length == 0){
+                if(this.erros.length < 5){
                 const erro = {
                     "id": this.erros.length,
                     "erro": "Preencha os campos",
@@ -34,7 +35,9 @@ const app = new Vue({
                     }
                 }, 300);
             }
+            }
             else if(this.user.senha !== this.user.confirma){
+                if(this.erros.length < 5){
                 const erro = {
                     "id": this.erros.length,
                     "erro": "Senha diferentes",
@@ -49,6 +52,7 @@ const app = new Vue({
                         this.erros.splice(id, 1)
                     }
                 }, 300);
+            }
             } else{
                 $.ajax({
                     method: 'post',
