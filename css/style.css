@@ -95,9 +95,10 @@ form::before{
 
 .erros{
     position: fixed;
-    right: 20px;
-    bottom: 20px;
+    top: 20px;
     z-index: 10000;
+    left: 50%;
+    transform: translate(-50%);
 }
 
 .pop{
