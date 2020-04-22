@@ -17,66 +17,66 @@ const app = new Vue({
         deletandoQuem: {}
     },
     methods: {
-        cadastrar(){
-            if(this.user.nome.length == 0 || this.user.email.length == 0 || this.user.login.length == 0 || this.user.senha.length == 0){
-                if(this.erros.length < 5){
-                const erro = {
-                    "id": this.erros.length,
-                    "erro": "Preencha os campos",
-                    "progress": 100
-                }
-                this.erros.push(erro)
-                const interval = setInterval(() => {
-                    const id = this.erros.indexOf(erro)
-                    this.erros[id].progress -= 10;
-                    if(this.erros[id].progress == 0){
-                        clearInterval(interval)
-                        this.erros.splice(id, 1)
+        cadastrar() {
+            if (this.user.nome.length == 0 || this.user.email.length == 0 || this.user.login.length == 0 || this.user.senha.length == 0) {
+                if (this.erros.length < 5) {
+                    const erro = {
+                        "id": this.erros.length,
+                        "erro": "Preencha os campos",
+                        "progress": 100
                     }
-                }, 300);
-            }
-            }
-            else if(this.user.senha !== this.user.confirma){
-                if(this.erros.length < 5){
-                const erro = {
-                    "id": this.erros.length,
-                    "erro": "Senha diferentes",
-                    "progress": 100
+                    this.erros.push(erro)
+                    const interval = setInterval(() => {
+                        const id = this.erros.indexOf(erro)
+                        this.erros[id].progress -= 10;
+                        if (this.erros[id].progress == 0) {
+                            clearInterval(interval)
+                            this.erros.splice(id, 1)
+                        }
+                    }, 300);
                 }
-                this.erros.push(erro)
-                const interval = setInterval(() => {
-                    const id = this.erros.indexOf(erro)
-                    this.erros[id].progress -= 10;
-                    if(this.erros[id].progress == 0){
-                        clearInterval(interval)
-                        this.erros.splice(id, 1)
-                    }
-                }, 300);
             }
-            } else{
+            else if (this.user.senha !== this.user.confirma) {
+                if (this.erros.length < 5) {
+                    const erro = {
+                        "id": this.erros.length,
+                        "erro": "Senha diferentes",
+                        "progress": 100
+                    }
+                    this.erros.push(erro)
+                    const interval = setInterval(() => {
+                        const id = this.erros.indexOf(erro)
+                        this.erros[id].progress -= 10;
+                        if (this.erros[id].progress == 0) {
+                            clearInterval(interval)
+                            this.erros.splice(id, 1)
+                        }
+                    }, 300);
+                }
+            } else {
                 $.ajax({
                     method: 'post',
                     url: '/api.php?tipo=cadastrar',
                     data: `nome=${this.user.nome}&email=${this.user.email}&login=${this.user.login}&senha=${this.user.senha}`,
                     dataType: 'json',
                     success: function (data) {
-                       
+
                     },
                     error: function (argument) {
-                       
+
                     }
                 });
                 this.cadastrare = false
-                if(this.usuarios.length > 0){
-                const codigo = parseInt(this.usuarios[this.usuarios.length - 1].codigo )+ 1
-                this.usuarios.push({
-                    codigo: codigo,
-                    "nome": this.user.nome,
-                    "email": this.user.email,
-                    "login": this.user.login,
-                    "senha":this.user.senha,
-                })
-                } else{
+                if (this.usuarios.length > 0) {
+                    const codigo = parseInt(this.usuarios[this.usuarios.length - 1].codigo) + 1
+                    this.usuarios.push({
+                        codigo: codigo,
+                        "nome": this.user.nome,
+                        "email": this.user.email,
+                        "login": this.user.login,
+                        "senha": this.user.senha,
+                    })
+                } else {
                     this.listarUsuarios()
                     this.getListUser()
                 }
@@ -87,19 +87,22 @@ const app = new Vue({
                     "senha": "",
                     "confirma": "",
                 }
-           
+
             }
-            
-        } ,
-        nothing(){
 
         },
-        getListUser(){
+        nothing() {
+
+        },
+        getListUser() {
+            this.editando = false;
             setTimeout(() => {
                 this.usuarios = JSON.parse(localStorage.getItem("users"));
-               }, 400);
+            }, 400);
         },
-        listarUsuarios(){
+        listarUsuarios() {
+            this.editando = false;
+            this.editandoQuem = {};
             $.ajax({
                 method: 'get',
                 url: '/api.php?tipo=listar',
@@ -108,13 +111,13 @@ const app = new Vue({
                     localStorage.setItem("users", JSON.stringify(data))
                 },
                 error: function (argument) {
-                   
+
                 }
             });
             this.cadastrare = false
             this.getListUser()
         },
-        save(){
+        save() {
             $.ajax({
                 method: 'post',
                 url: '/api.php?tipo=editar',
@@ -124,7 +127,7 @@ const app = new Vue({
                     localStorage.setItem("users", JSON.stringify(data))
                 },
                 error: function (argument) {
-                   
+
                 }
             });
             this.editandoQuem = {};
@@ -137,41 +140,46 @@ const app = new Vue({
                     localStorage.setItem("users", JSON.stringify(data))
                 },
                 error: function (argument) {
-                   
+
                 }
             });
             const found = this.usuarios.find(e => e == this.editandoQuem)
-            if(found){
+            if (found) {
                 const id = this.usuarios.indexOf(found)
-                this.usuarios [id] = this.editandoQuem
+                this.usuarios[id] = this.editandoQuem
             }
         },
-        editar(people){
+        editar(people) {
             this.editandoQuem = people
+            this.editandoQuem.senha = "";
             this.editando = true
         },
-        deletee(){
+        deletee() {
+            this.editando = false;
+            this.editandoQuem = {};
             $.ajax({
                 method: 'post',
-                url: '/api.php?tipo=deletar&codigo='+this.deletandoQuem.codigo,
+                url: '/api.php?tipo=deletar&codigo=' + this.deletandoQuem.codigo,
                 dataType: 'json',
                 success: function (data) {
                     localStorage.setItem("users", JSON.stringify(data))
                 },
                 error: function (argument) {
-                   
+
                 }
             });
             this.excluindo = false
             const found = this.usuarios.find(e => e == this.deletandoQuem)
-            if(found){
+            if (found) {
                 const id = this.usuarios.indexOf(found)
                 this.usuarios.splice(id, 1)
             }
         },
-        deletar(people){
+        deletar(people) {
             this.excluindo = true
+            this.editando = false;
             this.deletandoQuem = people
+            this.editandoQuem = {};
         }
     }
 })

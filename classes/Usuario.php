@@ -25,6 +25,15 @@ class Usuario {
     }
 
     public function editar($codigo, $nome, $email, $login, $senha){
+        if(strlen($senha) == 0){
+           $sql = "update usuario set nome = ?, email = ?, login = ? where codigo = ?;";       
+        $q = $this->conexao->prepare($sql);
+        $q->bindParam(1, $nome);
+        $q->bindParam(2, $email);
+        $q->bindParam(3, $login);
+        $q->bindParam(4, $codigo);
+        $q->execute();
+        } else{
         $sql = "update usuario set nome = ?, email = ?, login = ?, senha = ? where codigo = ?;";       
         $q = $this->conexao->prepare($sql);
         $q->bindParam(1, $nome);
@@ -33,6 +42,7 @@ class Usuario {
         $q->bindParam(4, md5($senha));
         $q->bindParam(5, $codigo);
         $q->execute();
+        }
     }
 
     public function delete($codigo){
