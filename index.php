@@ -25,6 +25,7 @@
     <form 
     v-if="cadastrare"
     v-on:submit.prevent="cadastrar">
+    <h1 style="color: #fff;">Cadastrar</h1>
         <label for="nome">Nome</label>
         <input type="text"
                        name="nome"
@@ -70,12 +71,18 @@
         </div>
     </div>
     <form v-on:submit.prevent="nothing" class="lista"  v-if="!cadastrare">
+    <h1 style="color: #fff;">Usuarios</h1>
     <div class="scroll">
         <li v-if="usuarios.length == 0">
         <td>Nenhum usuario cadastrado</td>
         </li>
     <tr>
             <li v-for="i in usuarios">
+             <td>
+                <span v-if=" editandoQuem != i">{{ i.nome }}</span>
+                <input v-model="editandoQuem.nome" v-else="" type="text" placeholder="Nome">
+            </td>
+            <br>
             <td>
                 <span v-if=" editandoQuem != i">{{ i.email }}</span>
                 <input v-model="editandoQuem.email" v-else="" type="text" placeholder="E-mail">
@@ -85,6 +92,11 @@
                 <span v-if="editandoQuem != i">{{ i.login }}</span>
                 <input v-model="editandoQuem.login" v-if="editando && editandoQuem == i" type="text" placeholder="Usuario">
             </td>
+             <br>
+             <td>
+                <span v-if=" editandoQuem != i">Senha</span>
+                <input v-model="editandoQuem.senha" v-else="" type="text" placeholder="Senha">
+            </td>          
             <td>
                 <button @click="deletar(i)"><i class="fas fa-user-minus"></i></button>
                 <button v-if="editando && editandoQuem == i" @click="save"><i class="fas fa-save"></i></button>
